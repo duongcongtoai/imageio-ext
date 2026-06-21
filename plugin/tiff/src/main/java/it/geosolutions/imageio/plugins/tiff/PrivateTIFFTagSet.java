@@ -54,6 +54,11 @@ public class PrivateTIFFTagSet extends TIFFTagSet {
      */
     public static final int COMPRESSION_ZSTD = 50000;
 
+    /**
+     * Used by WEBP
+     */
+    public static final int COMPRESSION_WEBP = 50001;
+
     static class GDALNoData extends TIFFTag {
         public GDALNoData () {
             super("GDALNoDataTag",

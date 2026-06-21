@@ -158,8 +158,13 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         ContiguousRangeComposer contiguousRangeComposer =
                 new ContiguousRangeComposer(0, cogTileInfo.getHeaderLength() - 1);
 
+        // Sort tiles by byte offset to allow proper merging of fragmented compressed tiles
+        java.util.List<TileRange> sortedRanges = new java.util.ArrayList<>(cogTileInfo.getTileRanges().values());
+        sortedRanges.sort(java.util.Comparator.comparingLong(TileRange::getStart));
+
         // determine which requested tiles are not in cache and build the required ranges that need to be read (if any)
-        cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) -> {
+        sortedRanges.forEach(tileRange -> {
+            int tileIndex = tileRange.getIndex();
             if (tileIndex == HEADER_TILE_INDEX) {
                 return;
             }

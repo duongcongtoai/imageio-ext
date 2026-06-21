@@ -36,9 +36,9 @@ public class RangeBuilderTest {
         long initialRangeEnd = 100;
 
         // verify that after adding a single range that is not contiguous with the initial range there are two ranges
-        // that start and end where expected
-        long tileRange1Start = 200;
-        long tileRange1End = 300;
+        // that start and end where expected (Note: since we tolerate up to 64KB gaps, we must make the gap larger)
+        long tileRange1Start = 70000;
+        long tileRange1End = 70100;
         ContiguousRangeComposer rangeBuilder = new ContiguousRangeComposer(initialRangeStart, initialRangeEnd);
         rangeBuilder.addTileRange(tileRange1Start, tileRange1End);
         List<long[]> ranges = new ArrayList<>(rangeBuilder.getRanges());

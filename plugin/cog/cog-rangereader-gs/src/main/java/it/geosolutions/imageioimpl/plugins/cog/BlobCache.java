@@ -69,8 +69,10 @@ class BlobCache {
     }
 
     static final LoadingCache<BlobKey, Optional<Blob>> BLOB_CACHE =
-            CacheBuilder.newBuilder().weakValues().build(new CacheLoader<BlobKey,
-                    Optional<Blob>>() {
+            CacheBuilder.newBuilder()
+                    .maximumSize(1000)
+                    .expireAfterAccess(10, java.util.concurrent.TimeUnit.MINUTES)
+                    .build(new CacheLoader<BlobKey, Optional<Blob>>() {
                 @Override
                 public Optional<Blob> load(BlobKey key) {
                     return Optional.ofNullable(key.storage.get(key.blobId));

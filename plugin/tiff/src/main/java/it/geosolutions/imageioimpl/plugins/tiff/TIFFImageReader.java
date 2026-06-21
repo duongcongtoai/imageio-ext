@@ -1977,6 +1977,8 @@ public class TIFFImageReader extends ImageReader {
                         BaselineTIFFTagSet.PREDICTOR_NONE :
                         predictorField.getAsInt(0));
                 this.decompressor = new TIFFZSTDDecompressor(predictor);
+            } else if (compression == PrivateTIFFTagSet.COMPRESSION_WEBP) {
+                this.decompressor = new TIFFWebPDecompressor();
             }
 
 
@@ -1989,7 +1991,8 @@ public class TIFFImageReader extends ImageReader {
             if (photometricInterpretation ==
                 BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR &&
                 compression != BaselineTIFFTagSet.COMPRESSION_JPEG &&
-                compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
+                compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG &&
+                compression != PrivateTIFFTagSet.COMPRESSION_WEBP) {
                 boolean convertYCbCrToRGB =
                     theImage.getColorModel().getColorSpace().getType() ==
                     ColorSpace.TYPE_RGB;
@@ -2017,7 +2020,8 @@ public class TIFFImageReader extends ImageReader {
                         BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR &&
                         !(this.decompressor instanceof TIFFYCbCrDecompressor) &&
                         compression != BaselineTIFFTagSet.COMPRESSION_JPEG &&
-                        compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
+                        compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG &&
+                        compression != PrivateTIFFTagSet.COMPRESSION_WEBP) {
                  colorConverter = new TIFFYCbCrColorConverter(imageMetadata);
             }
         }

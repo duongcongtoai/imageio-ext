@@ -57,9 +57,11 @@ public class ContiguousRangeComposer {
     public void addTileRange(long start, long end) {
         tileAdded = true;
 
-        if (start == currentRangeEnd + 1) {
-            // this tile starts where the last one left off
-            currentRangeEnd = end;
+        // Allow up to a 64KB gap (65536 bytes) to be merged into a single HTTP request rather than splitting.
+        // Compressed tiles (like WebP or JPEG) often have small headers or padding interleaved between them.
+        if (start <= currentRangeEnd + 65536) {
+            // this tile starts where or very close to where the last one left off
+            currentRangeEnd = Math.max(currentRangeEnd, end);
         } else {
             // this tile is in a new position.  add the current range and start a new one.
             ranges.add(new long[]{currentRangeStart, currentRangeEnd});

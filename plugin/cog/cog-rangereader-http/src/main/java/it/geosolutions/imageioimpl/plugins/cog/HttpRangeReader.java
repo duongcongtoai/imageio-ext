@@ -86,6 +86,20 @@ public class HttpRangeReader extends AbstractRangeReader {
                 throw new IOException("Unable to read header for " + uri + ". "
                         + "Code: " + response.code() + ". Reason: " + response.message());
             }
+            
+            // Extract the total file length from the Content-Range header to clamp future requests
+            String contentRange = response.header("Content-Range");
+            if (contentRange != null) {
+                java.util.regex.Matcher m = java.util.regex.Pattern.compile("bytes\\s+\\d+-\\d+/(\\d+)").matcher(contentRange);
+                if (m.find()) {
+                    this.fileLength = Long.parseLong(m.group(1));
+                }
+            } else {
+                String contentLength = response.header("Content-Length");
+                if (contentLength != null && response.code() == 200) {
+                    this.fileLength = Long.parseLong(contentLength);
+                }
+            }
 
             // get the header bytes
             byte[] headerBytes = response.body().bytes();
@@ -111,6 +125,20 @@ public class HttpRangeReader extends AbstractRangeReader {
             if (!response.isSuccessful()) {
                 throw new IOException("Unable to read header for " + uri + ". "
                         + "Code: " + response.code() + ". Reason: " + response.message());
+            }
+            
+            // Extract the total file length from the Content-Range header to clamp future requests
+            String contentRange = response.header("Content-Range");
+            if (contentRange != null) {
+                java.util.regex.Matcher m = java.util.regex.Pattern.compile("bytes\\s+\\d+-\\d+/(\\d+)").matcher(contentRange);
+                if (m.find()) {
+                    this.fileLength = Long.parseLong(m.group(1));
+                }
+            } else {
+                String contentLength = response.header("Content-Length");
+                if (contentLength != null && response.code() == 200) {
+                    this.fileLength = Long.parseLong(contentLength);
+                }
             }
 
             // get the header bytes

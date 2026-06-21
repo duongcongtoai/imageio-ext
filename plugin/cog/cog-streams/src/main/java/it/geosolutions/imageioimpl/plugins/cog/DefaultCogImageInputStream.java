@@ -140,7 +140,12 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
         // read data with the RangeReader and set the byte order and pointer on the new input stream
         ContiguousRangeComposer contiguousRangeComposer = new ContiguousRangeComposer(0, cogTileInfo.getHeaderLength() - 1);
 
-        cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) -> {
+        // Sort tiles by byte offset to allow proper merging of fragmented compressed tiles
+        java.util.List<TileRange> sortedRanges = new java.util.ArrayList<>(cogTileInfo.getTileRanges().values());
+        sortedRanges.sort(java.util.Comparator.comparingLong(TileRange::getStart));
+
+        sortedRanges.forEach(tileRange -> {
+            int tileIndex = tileRange.getIndex();
             if (tileIndex == HEADER_TILE_INDEX) {
                 return;
             }

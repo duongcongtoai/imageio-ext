@@ -12,6 +12,13 @@
     <name>Cloud Optimized GeoTIFF Reader</name>
 
     <dependencies>
+        <!-- TwelveMonkeys WebP Plugin -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.10.1</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>it.geosolutions.imageio-ext</groupId>
             <artifactId>imageio-ext-tiff</artifactId>
@@ -34,6 +41,13 @@
                 <online.skip.pattern>disabled</online.skip.pattern>
             </properties>
             <dependencies>
+        <!-- TwelveMonkeys WebP Plugin -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.10.1</version>
+            <scope>test</scope>
+        </dependency>
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-http</artifactId>
@@ -63,6 +77,13 @@
                 <jar.finalName>${project.artifactId}-http-${project.version}</jar.finalName>
             </properties>
             <dependencies>
+        <!-- TwelveMonkeys WebP Plugin -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.10.1</version>
+            <scope>test</scope>
+        </dependency>
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-http</artifactId>
@@ -77,6 +98,13 @@
                 <jar.finalName>${project.artifactId}-s3-${project.version}</jar.finalName>
             </properties>
             <dependencies>
+        <!-- TwelveMonkeys WebP Plugin -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.10.1</version>
+            <scope>test</scope>
+        </dependency>
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-s3</artifactId>
@@ -91,6 +119,13 @@
                 <jar.finalName>${project.artifactId}-azure-${project.version}</jar.finalName>
             </properties>
             <dependencies>
+        <!-- TwelveMonkeys WebP Plugin -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.10.1</version>
+            <scope>test</scope>
+        </dependency>
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-azure</artifactId>
@@ -108,6 +143,13 @@
                 <jar.finalName>${project.artifactId}-all-${project.version}</jar.finalName>
             </properties>
             <dependencies>
+        <!-- TwelveMonkeys WebP Plugin -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.10.1</version>
+            <scope>test</scope>
+        </dependency>
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-http</artifactId>

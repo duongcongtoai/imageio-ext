@@ -459,7 +459,7 @@ public class TIFFIFD extends TIFFDirectory {
             
             if (tiffTag == null) {
                 // XXX Warning: unknown tag
-            } else if (!tiffTag.isDataTypeOK(type)) {
+            } else if (!tiffTag.isDataTypeOK(type) && type != TIFFTag.TIFF_LAZY_LONG && type != TIFFTag.TIFF_LAZY_LONG8) {
                 // XXX Warning: bad data type
             } else if (tiffTag.isIFDPointer() && obj != null) {
                 stream.mark();

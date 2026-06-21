@@ -50,6 +50,7 @@ public abstract class AbstractRangeReader implements RangeReader {
     protected SoftValueHashMap<Long, byte[]> data = new SoftValueHashMap<>(0);
     protected int headerLength;
     protected int headerOffset = 0;
+    protected long fileLength = -1;
 
     private final static Logger LOGGER = Logger.getLogger(AbstractRangeReader.class.getName());
 
@@ -82,6 +83,19 @@ public abstract class AbstractRangeReader implements RangeReader {
         List<long[]> newRanges = new ArrayList<>();
         for (int i = 0; i < ranges.length; i++) {
             int dataLength = headerLength;
+            
+            // Clamp the requested range to the actual file bounds if known
+            if (fileLength > 0 && ranges[i][1] >= fileLength) {
+                LOGGER.fine("Clamping range request from " + ranges[i][1] + " to EOF (" + (fileLength - 1) + ")");
+                ranges[i][1] = fileLength - 1;
+                modified = true;
+                
+                if (ranges[i][0] > ranges[i][1]) {
+                    LOGGER.fine("Discarding range starting at " + ranges[i][0] + " because it exceeds EOF.");
+                    continue; // Skip entirely if it's completely past EOF
+                }
+            }
+            
             if (ranges[i][0] < dataLength - 1) {
                 // this range starts inside of what we already read for the header
                 modified = true;

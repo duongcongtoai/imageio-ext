@@ -85,6 +85,18 @@ public class S3RangeReader extends AbstractRangeReader {
         GetObjectRequest headerRequest = buildRequest();
         try {
             ResponseBytes<GetObjectResponse> responseBytes = client.getObject(headerRequest, toBytes()).get();
+            if (responseBytes.response() != null && responseBytes.response().contentLength() != null) {
+                // Approximate the file size based on the returned response range length or metadata if needed. 
+                // AWS S3 response content length is the length of the body returned, not the whole file,
+                // but Content-Range provides the total. We'll leave it simple for now or extract from metadata.
+                String contentRange = responseBytes.response().contentRange();
+                if (contentRange != null) {
+                    java.util.regex.Matcher m = java.util.regex.Pattern.compile("bytes\\s+\\d+-\\d+/(\\d+)").matcher(contentRange);
+                    if (m.find()) {
+                        this.fileLength = Long.parseLong(m.group(1));
+                    }
+                }
+            }
 
             // get the header bytes
             byte[] headerBytes = responseBytes.asByteArray();
@@ -120,6 +132,18 @@ public class S3RangeReader extends AbstractRangeReader {
         GetObjectRequest headerRequest = buildRequest();
         try {
             ResponseBytes<GetObjectResponse> responseBytes = client.getObject(headerRequest, toBytes()).get();
+            if (responseBytes.response() != null && responseBytes.response().contentLength() != null) {
+                // Approximate the file size based on the returned response range length or metadata if needed. 
+                // AWS S3 response content length is the length of the body returned, not the whole file,
+                // but Content-Range provides the total. We'll leave it simple for now or extract from metadata.
+                String contentRange = responseBytes.response().contentRange();
+                if (contentRange != null) {
+                    java.util.regex.Matcher m = java.util.regex.Pattern.compile("bytes\\s+\\d+-\\d+/(\\d+)").matcher(contentRange);
+                    if (m.find()) {
+                        this.fileLength = Long.parseLong(m.group(1));
+                    }
+                }
+            }
 
             // get the header bytes
             byte[] headerBytes = responseBytes.asByteArray();
