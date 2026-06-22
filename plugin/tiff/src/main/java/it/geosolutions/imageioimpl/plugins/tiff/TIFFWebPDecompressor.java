@@ -2,7 +2,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    https://github.com/geosolutions-it/imageio-ext
- *    (C) 2007 - 2016, GeoSolutions
+ *    (C) 2024, GeoSolutions
  *    All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,63 +27,56 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package it.geosolutions.imageio.plugins.tiff;
+package it.geosolutions.imageioimpl.plugins.tiff;
 
-import java.util.ArrayList;
-import java.util.List;
+import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
-/** A class representing private and custom tags. */
-public class PrivateTIFFTagSet extends TIFFTagSet {
+/** Decompressor for WebP compression */
+public class TIFFWebPDecompressor extends TIFFDecompressor {
 
-    private static PrivateTIFFTagSet theInstance = null;
+    private ImageReader webpReader;
+    private ImageReadParam webpParam;
 
-    /** Used by GDAL: a XML document providing */
-    public static final int TAG_GDAL_METADATA = 42112;
+    public TIFFWebPDecompressor() {
+        Iterator<ImageReader> iter = ImageIO.getImageReadersByFormatName("webp");
 
-    /** Used by GDAL: an ASCII encoded nodata value. */
-    public static final int TAG_GDAL_NODATA = 42113;
+        if (!iter.hasNext()) {
+            throw new IllegalStateException(
+                    "No WebP readers found! Please add a WebP ImageIO plugin to your classpath.");
+        }
 
-    /** Used by ZSTD */
-    public static final int COMPRESSION_ZSTD = 50000;
+        this.webpReader = iter.next();
+        this.webpParam = webpReader.getDefaultReadParam();
+    }
 
-    /** Used by WEBP */
-    public static final int COMPRESSION_WEBP = 50001;
+    @Override
+    public void decodeRaw(byte[] b, int dstOffset, int bitsPerPixel, int scanlineStride) throws IOException {
+        stream.seek(offset);
 
-    static class GDALNoData extends TIFFTag {
-        public GDALNoData() {
-            super("GDALNoDataTag", TAG_GDAL_NODATA, 1 << TIFFTag.TIFF_ASCII);
+        byte[] data = new byte[byteCount];
+        stream.readFully(data);
+
+        try (ImageInputStream iis = new MemoryCacheImageInputStream(new ByteArrayInputStream(data))) {
+            webpReader.setInput(iis, false, true);
+            webpParam.setDestination(rawImage);
+            webpReader.read(0, webpParam);
         }
     }
 
-    static class GDALMetadata extends TIFFTag {
-        public GDALMetadata() {
-            super("GDALMetadata", TAG_GDAL_METADATA, 1 << TIFFTag.TIFF_ASCII);
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (webpReader != null) {
+            webpReader.dispose();
+            webpReader = null;
         }
-    }
-
-    private static List<TIFFTag> tags;
-
-    private static void initTags() {
-        tags = new ArrayList<TIFFTag>(1);
-        tags.add(new PrivateTIFFTagSet.GDALNoData());
-        tags.add(new PrivateTIFFTagSet.GDALMetadata());
-    }
-
-    private PrivateTIFFTagSet() {
-        super(tags);
-    }
-
-    /**
-     * Returns a shared instance of a <code>PrivateTIFFTagSet</code>.
-     *
-     * @return a <code>PrivateTIFFTagSet</code> instance.
-     */
-    public static synchronized PrivateTIFFTagSet getInstance() {
-        if (theInstance == null) {
-            initTags();
-            theInstance = new PrivateTIFFTagSet();
-            tags = null;
-        }
-        return theInstance;
     }
 }
