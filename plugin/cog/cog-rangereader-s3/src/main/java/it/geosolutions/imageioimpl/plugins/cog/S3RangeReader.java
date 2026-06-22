@@ -80,6 +80,16 @@ public class S3RangeReader extends AbstractRangeReader {
             ResponseBytes<GetObjectResponse> responseBytes =
                     client.getObject(headerRequest, toBytes()).get();
 
+            // Extract the total file length from the Content-Range header to clamp future requests
+            String contentRange = responseBytes.response().contentRange();
+            if (contentRange != null) {
+                java.util.regex.Matcher m = java.util.regex.Pattern.compile("bytes\\s+\\d+-\\d+/(\\d+)")
+                        .matcher(contentRange);
+                if (m.find()) {
+                    this.fileLength = Long.parseLong(m.group(1));
+                }
+            }
+
             // get the header bytes
             byte[] headerBytes = responseBytes.asByteArray();
             if (headerOffset != 0) {
@@ -115,6 +125,16 @@ public class S3RangeReader extends AbstractRangeReader {
         try {
             ResponseBytes<GetObjectResponse> responseBytes =
                     client.getObject(headerRequest, toBytes()).get();
+
+            // Extract the total file length from the Content-Range header to clamp future requests
+            String contentRange = responseBytes.response().contentRange();
+            if (contentRange != null) {
+                java.util.regex.Matcher m = java.util.regex.Pattern.compile("bytes\\s+\\d+-\\d+/(\\d+)")
+                        .matcher(contentRange);
+                if (m.find()) {
+                    this.fileLength = Long.parseLong(m.group(1));
+                }
+            }
 
             // get the header bytes
             byte[] headerBytes = responseBytes.asByteArray();

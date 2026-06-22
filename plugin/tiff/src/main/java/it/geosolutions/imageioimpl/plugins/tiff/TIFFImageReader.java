@@ -1939,6 +1939,8 @@ public class TIFFImageReader extends ImageReader {
                 int predictor =
                         ((predictorField == null) ? BaselineTIFFTagSet.PREDICTOR_NONE : predictorField.getAsInt(0));
                 decompressor = new TIFFZSTDDecompressor(predictor);
+            } else if (compression == PrivateTIFFTagSet.COMPRESSION_WEBP) {
+                decompressor = new TIFFWebPDecompressor();
             } else {
                 throw new IIOException("Unsupported compression type (tag number = " + compression + ")!");
             }

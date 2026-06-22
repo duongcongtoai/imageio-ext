@@ -553,7 +553,8 @@ public class TIFFField implements Comparable {
     public TIFFField(TIFFTag tag, int type, int count, Object data) {
         if (tag == null) {
             throw new IllegalArgumentException("tag == null!");
-        } else if (type < TIFFTag.MIN_DATATYPE || type > TIFFTag.MAX_DATATYPE) {
+        } else if (type < TIFFTag.MIN_DATATYPE
+                || (type > TIFFTag.MAX_DATATYPE && type != TIFFTag.TIFF_LAZY_LONG && type != TIFFTag.TIFF_LAZY_LONG8)) {
             throw new IllegalArgumentException("Unknown data type " + type);
         } else if (count < 0) {
             throw new IllegalArgumentException("count < 0!");

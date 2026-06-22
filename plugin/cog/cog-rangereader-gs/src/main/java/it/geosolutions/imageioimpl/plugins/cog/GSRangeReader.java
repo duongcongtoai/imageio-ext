@@ -148,6 +148,9 @@ public class GSRangeReader extends AbstractRangeReader {
                 if (this.blob == null) {
                     this.blob = BlobCache.getBlob(authUri.getUser(), id);
                     if (blob == null) throw new IllegalArgumentException("No blob exist at " + id);
+                    if (this.blob.getSize() != null) {
+                        this.fileLength = this.blob.getSize();
+                    }
                 }
             }
         }
