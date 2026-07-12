@@ -8,3 +8,4 @@ target
 *.class
 *.pyc
 *.iml
+*.spotless-index

@@ -126,12 +126,21 @@ public class GSRangeReader extends AbstractRangeReader {
         }
 
         byte[] headerBytes = readInternal(headerOffset, headerLength);
+        // if (headerOffset != 0) {
+        //     byte[] oldHeader = data.get(0L);
+        //     byte[] newHeader = new byte[headerBytes.length + oldHeader.length];
+        //     System.arraycopy(oldHeader, 0, newHeader, 0, oldHeader.length);
+        //     System.arraycopy(headerBytes, 0, newHeader, oldHeader.length, headerBytes.length);
+        //     headerBytes = newHeader;
+        //     HEADERS_CACHE.put(uri.toString(), newHeader);
+        // }
         data.put(0L, headerBytes);
         return headerBytes;
     }
 
     private byte[] readInternal(long readOffset, int readLength) {
         try (ReadChannel channel = getBlob().reader()) {
+            channel.setChunkSize(Math.max(readLength, 1));
             ByteBuffer buffer = ByteBuffer.allocate(readLength);
             channel.seek(readOffset);
             int bytesRead = channel.read(buffer);
